@@ -1,0 +1,71 @@
+---
+const skills = [
+  "React / Next.js",
+  "TypeScript",
+  "Node.js / Express",
+  "PostgreSQL / Supabase",
+  "Astro",
+  "Tailwind CSS",
+  "Docker",
+  "IoT / ESP32",
+];
+---
+
+<section class="section" id="about">
+  <div class="container">
+    <h2 class="section-title">Sobre mí</h2>
+    <div class="about-content">
+      <p>
+        Construyo aplicaciones web modernas, escalables y con foco en la
+        experiencia de usuario. Me muevo cómodo en todo el stack: desde bases de
+        datos hasta animaciones en el frontend.
+      </p>
+      <p>
+        He desarrollado plataformas SaaS completas, dashboards IoT en tiempo
+        real y e-commerce con autenticación, pagos y roles de usuario. También
+        programo firmware para ESP32/ESP8266 con sensores ambientales.
+      </p>
+      <div class="about-skills">
+        <h3>Tecnologías con las que trabajo</h3>
+        <div class="about-tags">
+          {skills.map((s) => <span>{s}</span>)}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-content {
+    max-width: 640px;
+  }
+
+  .about-content p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .about-skills h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 32px 0 16px;
+  }
+
+  .about-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .about-tags span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+</style>
