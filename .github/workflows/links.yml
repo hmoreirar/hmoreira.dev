@@ -1,0 +1,42 @@
+name: External links
+
+on:
+  schedule:
+    # Lunes 09:00 UTC — revisa demos y repos antes de la semana
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  lychee:
+    name: Check external links
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check external links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --verbose
+            --accept 200,206,429
+            --timeout 90
+            --max-retries 3
+            --retry-wait-time 10
+            --exclude-mail
+            --exclude 'localhost'
+            --exclude '127.0.0.1'
+            'dist/**/*.html'
+          fail: true

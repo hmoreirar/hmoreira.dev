@@ -1,34 +1,37 @@
 ---
-const skills = [
-  "React / Next.js",
-  "TypeScript",
-  "Node.js / Express",
-  "PostgreSQL / Supabase",
-  "Astro",
-  "Tailwind CSS",
-  "Docker",
-  "IoT / ESP32",
-];
+import { getLangFromUrl, useTranslations } from "../i18n";
+import { skillGroups } from "../data/site";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <section class="section" id="about">
   <div class="container">
-    <h2 class="section-title">Sobre mí</h2>
-    <div class="about-content">
-      <p>
-        Construyo aplicaciones web modernas, escalables y con foco en la
-        experiencia de usuario. Me muevo cómodo en todo el stack: desde bases de
-        datos hasta animaciones en el frontend.
-      </p>
-      <p>
-        He desarrollado plataformas SaaS completas, dashboards IoT en tiempo
-        real y e-commerce con autenticación, pagos y roles de usuario. También
-        programo firmware para ESP32/ESP8266 con sensores ambientales.
-      </p>
-      <div class="about-skills">
-        <h3>Tecnologías con las que trabajo</h3>
-        <div class="about-tags">
-          {skills.map((s) => <span>{s}</span>)}
+    <h2 class="section-title">{t("about.title")}</h2>
+
+    <div class="about">
+      <div class="about__text">
+        <p>{t("about.p1")}</p>
+        <p>{t("about.p2")}</p>
+        <p class="about__cta">{t("about.p3")}</p>
+      </div>
+
+      <div class="about__skills">
+        <h3 class="about__skills-title">{t("about.skillsTitle")}</h3>
+        <div class="groups">
+          {
+            skillGroups.map((group) => (
+              <div class="group">
+                <h4 class="group__title">{group.title[lang]}</h4>
+                <ul class="group__list">
+                  {group.items.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -36,36 +39,67 @@ const skills = [
 </section>
 
 <style>
-  .about-content {
-    max-width: 640px;
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
   }
 
-  .about-content p {
+  .about__text p {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    line-height: 1.8;
-    margin-bottom: 16px;
+    line-height: 1.85;
+    margin-bottom: 18px;
   }
 
-  .about-skills h3 {
+  .about__cta {
+    color: var(--text) !important;
+    font-weight: 500;
+  }
+
+  .about__skills-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .groups {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .group__title {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text);
-    margin: 32px 0 16px;
+    margin-bottom: 10px;
   }
 
-  .about-tags {
+  .group__list {
+    list-style: none;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
 
-  .about-tags span {
-    font-size: 0.85rem;
+  .group__list li {
+    font-size: 0.82rem;
     color: var(--text-secondary);
-    padding: 8px 16px;
+    padding: 6px 13px;
     border-radius: 6px;
     background: var(--bg-card);
     border: 1px solid var(--border);
+  }
+
+  @media (max-width: 860px) {
+    .about {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
   }
 </style>

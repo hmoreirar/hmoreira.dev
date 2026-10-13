@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="404 — Héctor Moreira"
+  description="Página no encontrada. / Page not found."
+  lang="es"
+  path="/404"
+  noindex={true}
+>
+  <main class="nf">
+    <div class="container nf__inner">
+      <p class="nf__code">404</p>
+
+      <div class="nf__blocks">
+        <div>
+          <p class="nf__text">Esa página no existe.</p>
+          <a class="nf__link" href="/">Volver al inicio →</a>
+        </div>
+        <div>
+          <p class="nf__text">That page does not exist.</p>
+          <a class="nf__link" href="/en/">Back to home →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 96px 0;
+  }
+
+  .nf__code {
+    font-size: clamp(4rem, 14vw, 7rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 32px;
+  }
+
+  .nf__blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 28px;
+    max-width: 560px;
+  }
+
+  .nf__text {
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+
+  .nf__link {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.92rem;
+  }
+
+  .nf__link:hover {
+    color: var(--accent);
+  }
+</style>

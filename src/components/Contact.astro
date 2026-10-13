@@ -1,21 +1,33 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n";
+import { person } from "../data/site";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <section class="section" id="contact">
   <div class="container">
-    <h2 class="section-title">Contacto</h2>
-    <p class="contact-text">
-      Estoy abierto a oportunidades laborales y colaboraciones. Si tienes un
-      proyecto en mente, no dudes en escribirme.
-    </p>
-    <a href="mailto:contacto@hmoreira.dev" class="contact-email">
-      contacto@hmoreira.dev
+    <h2 class="section-title">{t("contact.title")}</h2>
+
+    <p class="contact-text">{t("contact.text")}</p>
+
+    <a class="contact-email" href={`mailto:${person.email}`}>
+      {person.email}
     </a>
-    <div class="contact-social">
-      <a href="https://github.com/hmoreirar" target="_blank">GitHub</a>
-      <span>/</span>
-      <a href="https://linkedin.com/in/hmoreirar" target="_blank">LinkedIn</a>
-    </div>
+
+    <ul class="contact-social">
+      <li>
+        <a href={person.github} target="_blank" rel="noopener noreferrer">
+          GitHub ↗
+        </a>
+      </li>
+      <li>
+        <a href={person.linkedin} target="_blank" rel="noopener noreferrer">
+          LinkedIn ↗
+        </a>
+      </li>
+    </ul>
   </div>
 </section>
 
@@ -23,19 +35,21 @@
   .contact-text {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    line-height: 1.7;
-    margin-bottom: 24px;
-    max-width: 480px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    max-width: 520px;
   }
 
   .contact-email {
     display: inline-block;
-    font-size: 1.8rem;
+    font-size: clamp(1.35rem, 4vw, 1.9rem);
     font-weight: 700;
     color: var(--text);
     text-decoration: none;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
     transition: color 0.2s ease;
+    overflow-wrap: anywhere;
   }
 
   .contact-email:hover {
@@ -44,8 +58,8 @@
 
   .contact-social {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 24px;
+    list-style: none;
   }
 
   .contact-social a {
@@ -57,15 +71,5 @@
 
   .contact-social a:hover {
     color: var(--accent);
-  }
-
-  .contact-social span {
-    color: var(--text-muted);
-  }
-
-  @media (max-width: 640px) {
-    .contact-email {
-      font-size: 1.3rem;
-    }
   }
 </style>

@@ -12,9 +12,13 @@
   --bg-secondary: #f4f4f5;
   --text: #18181b;
   --text-secondary: #52525b;
-  --text-muted: #a1a1aa;
+  --text-muted: #71717a;
+  /* Foreground accent: texto sobre --bg (>=4.5:1) */
   --accent: #7c3aed;
   --accent-hover: #6d28d9;
+  /* Solid accent: fondo bajo texto blanco (>=4.5:1) */
+  --accent-solid: #7c3aed;
+  --accent-solid-hover: #6d28d9;
   --border: #e4e4e7;
   --nav-bg: rgba(250, 250, 250, 0.85);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -29,9 +33,11 @@
   --bg-secondary: #16161e;
   --text: #e4e4ed;
   --text-secondary: #a1a1b0;
-  --text-muted: #52525e;
+  --text-muted: #7c7c8c;
   --accent: #a855f7;
   --accent-hover: #c084fc;
+  --accent-solid: #9333ea;
+  --accent-solid-hover: #7c3aed;
   --border: #1e1e28;
   --nav-bg: rgba(10, 10, 15, 0.85);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -39,6 +45,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Evita que el nav fijo tape el título de la sección al hacer scroll interno */
+  scroll-padding-top: calc(var(--header-height) + 24px);
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg);
 }
@@ -53,8 +61,14 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
-  color: white;
+  background: var(--accent-solid);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .container {
@@ -73,6 +87,15 @@ body {
   font-weight: 700;
   margin-bottom: 40px;
   color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.section-lead {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-width: 560px;
+  margin: -24px 0 40px;
 }
 
 .sr-only {
@@ -84,10 +107,50 @@ body {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 200;
+  padding: 10px 16px;
+  background: var(--accent-solid);
+  color: #fff;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  top: 12px;
 }
 
 @media (max-width: 640px) {
   .section {
     padding: 60px 0;
+  }
+
+  .section-title {
+    margin-bottom: 28px;
+  }
+}
+
+/* Respeta la preferencia del sistema: sin scroll animado ni transiciones */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

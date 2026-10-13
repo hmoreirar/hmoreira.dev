@@ -1,0 +1,360 @@
+---
+import { getLangFromUrl, useTranslations, translatePath } from "../i18n";
+import { person, skillGroups } from "../data/site";
+import { featuredProjects, otherProjects } from "../data/projects";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allProjects = [...featuredProjects, ...otherProjects];
+const backHref = translatePath("/", lang);
+---
+
+<div class="cv-page">
+  <div class="cv-toolbar no-print">
+    <a class="cv-back" href={backHref}>← {t("cv.backToSite")}</a>
+    <button type="button" class="cv-print" id="cvPrint">
+      {t("cv.print")}
+    </button>
+  </div>
+
+  <article class="cv">
+    <header class="cv__header">
+      <h1>{person.name}</h1>
+      <p class="cv__role">{t("cv.role")}</p>
+      <ul class="cv__contact">
+        <li>
+          <a href={`mailto:${person.email}`}>{person.email}</a>
+        </li>
+        <li>
+          <a href={person.github} target="_blank" rel="noopener noreferrer">
+            github.com/hmoreirar
+          </a>
+        </li>
+        <li>
+          <a href={person.linkedin} target="_blank" rel="noopener noreferrer">
+            linkedin.com/in/hmoreirar
+          </a>
+        </li>
+        <li>{person.location} · {person.timezone}</li>
+      </ul>
+    </header>
+
+    <section>
+      <h2>{t("cv.summaryTitle")}</h2>
+      <p class="cv__summary">{t("cv.summary")}</p>
+    </section>
+
+    <section>
+      <h2>{t("cv.experienceTitle")}</h2>
+      <ul class="cv__projects">
+        {
+          allProjects.map((p) => (
+            <li>
+              <h3>
+                <a href={p.repo} target="_blank" rel="noopener noreferrer">
+                  {p.title}
+                </a>
+                {p.demo && (
+                  <a
+                    class="cv__demo"
+                    href={p.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    ↗
+                  </a>
+                )}
+              </h3>
+              <p>{p.description[lang]}</p>
+              <p class="cv__tech">{p.tech.join(" · ")}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section>
+      <h2>{t("cv.skillsTitle")}</h2>
+      <dl class="cv__skills">
+        {
+          skillGroups.map((g) => (
+            <div>
+              <dt>{g.title[lang]}</dt>
+              <dd>{g.items.join(", ")}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section>
+      <h2>{t("cv.languagesTitle")}</h2>
+      <ul class="cv__list">
+        <li>{t("cv.langEs")}</li>
+        <li>{t("cv.langEn")}</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>{t("cv.educationTitle")}</h2>
+      <p>{t("cv.education")}</p>
+    </section>
+
+    <p class="cv__footnote no-print">{t("cv.footnote")}</p>
+  </article>
+</div>
+
+<style>
+  .cv-page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .cv-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .cv-back {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .cv-back:hover {
+    color: var(--text);
+  }
+
+  .cv-print {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--accent-solid);
+    background: var(--accent-solid);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .cv-print:hover {
+    background: var(--accent-solid-hover);
+    border-color: var(--accent-solid-hover);
+  }
+
+  .cv__header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+
+  .cv h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+
+  .cv__role {
+    color: var(--accent);
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .cv__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .cv__contact a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .cv__contact a:hover {
+    color: var(--accent);
+  }
+
+  .cv section {
+    margin-bottom: 32px;
+  }
+
+  .cv h2 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .cv__summary {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 0.95rem;
+  }
+
+  .cv__projects {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .cv__projects h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cv__projects h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .cv__projects h3 a:hover {
+    color: var(--accent);
+  }
+
+  .cv__demo {
+    font-size: 0.85rem;
+  }
+
+  .cv__projects p {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+
+  .cv__tech {
+    margin-top: 5px;
+    font-size: 0.78rem !important;
+    color: var(--text-muted) !important;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .cv__skills {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cv__skills div {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+  }
+
+  .cv__skills dt {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .cv__skills dd {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  .cv__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .cv section p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.75;
+  }
+
+  .cv__footnote {
+    margin-top: 40px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 560px) {
+    .cv__skills div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+
+  @media print {
+    :global(html),
+    :global(body) {
+      background: #fff !important;
+      color: #000 !important;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+
+    .cv-page {
+      max-width: none;
+      padding: 0;
+    }
+
+    .cv h1 {
+      font-size: 1.55rem;
+    }
+
+    .cv section {
+      margin-bottom: 18px;
+      break-inside: avoid;
+    }
+
+    .cv__projects {
+      gap: 12px;
+    }
+
+    .cv__projects h3 a,
+    .cv__contact a {
+      color: #000 !important;
+    }
+
+    .cv__role,
+    .cv__projects p,
+    .cv__summary,
+    .cv__skills dd,
+    .cv__list,
+    .cv section p {
+      color: #222 !important;
+    }
+
+    .cv__tech {
+      color: #555 !important;
+    }
+
+    .cv a[href]::after {
+      content: "";
+    }
+  }
+</style>
+
+<script>
+  const btn = document.getElementById("cvPrint");
+  btn?.addEventListener("click", () => window.print());
+</script>

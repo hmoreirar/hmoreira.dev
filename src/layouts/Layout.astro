@@ -1,46 +1,123 @@
 ---
+import "@fontsource-variable/inter";
 import "../styles/global.css";
+import {
+  getLangFromUrl,
+  translatePath,
+  langMeta,
+  type Lang,
+} from "../i18n";
+import { person } from "../data/site";
 
 export interface Props {
   title: string;
   description: string;
+  lang?: Lang;
+  /** Ruta canónica de esta página, sin dominio. */
+  path?: string;
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
+
+const lang: Lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const meta = langMeta[lang];
+const path = Astro.props.path ?? Astro.url.pathname;
+
+const canonical = new URL(path, Astro.site).toString();
+const altEs = new URL(translatePath(path, "es"), Astro.site).toString();
+const altEn = new URL(translatePath(path, "en"), Astro.site).toString();
+
+const ogImage = new URL("/og-image.png", Astro.site).toString();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: person.name,
+  url: new URL("/", Astro.site).toString(),
+  jobTitle: lang === "es" ? "Desarrollador Full Stack" : "Full Stack Developer",
+  email: `mailto:${person.email}`,
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "CL",
+  },
+  sameAs: [person.github, person.linkedin],
+  knowsAbout: [
+    "React",
+    "TypeScript",
+    "Node.js",
+    "PostgreSQL",
+    "Next.js",
+    "Astro",
+    "FastAPI",
+    "IoT",
+    "ESP32",
+  ],
+};
 ---
 
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang={meta.htmlLang} data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a0a0f" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta
+      name="theme-color"
+      content="#fafafa"
+      media="(prefers-color-scheme: light)"
     />
+    <meta
+      name="theme-color"
+      content="#0a0a0f"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={person.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={meta.locale} />
+    {
+      lang === "es" ? (
+        <meta property="og:locale:alternate" content="en_US" />
+      ) : (
+        <meta property="og:locale:alternate" content="es_ES" />
+      )
+    }
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="alternate" hreflang="es" href={altEs} />
+    <link rel="alternate" hreflang="en" href={altEn} />
+    <link rel="alternate" hreflang="x-default" href={altEs} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
     <script is:inline>
       (function () {
-        const theme = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-        if (theme === "light") {
-          document.documentElement.setAttribute("data-theme", "light");
-        } else if (theme === "dark") {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          var next = stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", next);
+        } catch (e) {
           document.documentElement.setAttribute("data-theme", "dark");
-        } else if (prefersDark) {
-          document.documentElement.setAttribute("data-theme", "dark");
-        } else {
-          document.documentElement.setAttribute("data-theme", "light");
         }
       })();
     </script>

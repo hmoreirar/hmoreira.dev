@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Cv from "../components/Cv.astro";
+import { useTranslations } from "../i18n";
+
+const t = useTranslations("es");
+---
+
+<Layout
+  title={t("cv.title")}
+  description={t("cv.summary")}
+  lang="es"
+  path="/cv"
+>
+  <main id="main">
+    <Cv />
+  </main>
+</Layout>

@@ -1,221 +1,211 @@
 ---
-interface Project {
-  title: string;
-  description: string;
-  tech: string[];
-  links: { label: string; url: string }[];
-  screenshot?: string;
-  icon?: string;
+import { Image } from "astro:assets";
+import { getLangFromUrl, useTranslations } from "../i18n";
+import {
+  featuredProjects,
+  otherProjects,
+  type Project,
+} from "../data/projects";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+/** Envuelve `texto entre backticks` en <code> para resaltar API y columnas. */
+function parts(text: string) {
+  return text.split(/(`[^`]+`)/g).map((part) => {
+    const isCode = part.startsWith("`") && part.endsWith("`") && part.length > 2;
+    return { code: isCode ? part.slice(1, -1) : part, isCode };
+  });
 }
 
-const projects: Project[] = [
-  {
-    title: "Pizzeria",
-    description:
-      "Sistema de pedidos online para pizzería con catálogo configurable (grupos y opciones), cotización de precios en el backend, seguimiento de pedidos en tiempo real y panel de administración.",
-    tech: ["React", "TypeScript", "Express", "PostgreSQL", "Docker", "Zod"],
-    links: [
-      { label: "Demo", url: "https://pizzeria-zn6y.onrender.com/" },
-      { label: "GitHub", url: "https://github.com/hmoreirar/pizzeria" },
-    ],
-    screenshot: "/projects/pizzeria.jpg",
-  },
-  {
-    title: "Climate Dashboard",
-    description:
-      "Dashboard IoT en tiempo real con sensores ESP32. Conexión desde el sensor hasta la UI con Next.js, PostgreSQL y Recharts.",
-    tech: ["Next.js", "TypeScript", "PostgreSQL", "Tailwind CSS", "Recharts"],
-    links: [
-      { label: "Demo", url: "https://climate-dashboard-one.vercel.app/" },
-      { label: "GitHub", url: "https://github.com/hmoreirar/climate-dashboard" },
-    ],
-    screenshot: "/projects/climate-dashboard.jpg",
-  },
-  {
-    title: "Learning Three.js",
-    description:
-      "Simulador interactivo del sistema solar construido con Three.js. Incluye shaders GLSL personalizados, sistema de partículas, bloom post-processing e interacción con los planetas en tiempo real.",
-    tech: ["Three.js", "Vite", "GLSL", "JavaScript"],
-    links: [
-      { label: "Demo", url: "https://hmoreirar.github.io/learning-threejs/" },
-      { label: "GitHub", url: "https://github.com/hmoreirar/learning-threejs" },
-    ],
-    screenshot: "/projects/learning-threejs.jpg",
-  },
-  {
-    title: "Reservas SaaS",
-    description:
-      "Plataforma de reservas tipo Calendly con dashboard de estadísticas, booking público y notificaciones por email.",
-    tech: ["React", "Express", "PostgreSQL", "JWT", "Tailwind CSS"],
-    links: [
-      { label: "Demo", url: "https://reservas-saas-production.up.railway.app/" },
-      { label: "GitHub", url: "https://github.com/hmoreirar/reservas-saas" },
-    ],
-    screenshot: "/projects/reservas-saas.jpg",
-  },
-  {
-    title: "Nicommerce",
-    description:
-      "E-commerce completo con panel de administración, carrito de compras persistente, checkout multi-paso y Docker.",
-    tech: ["React", "Express", "PostgreSQL", "Docker", "Nginx"],
-    links: [
-      { label: "GitHub", url: "https://github.com/hmoreirar/nicommerce" },
-    ],
-    icon: "cart",
-  },
-  {
-    title: "Job Tracker",
-    description:
-      "Gestor de postulaciones laborales con autenticación, CRUD completo y estadísticas del progreso en dashboard.",
-    tech: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS"],
-    links: [
-      { label: "Demo", url: "https://job-tracker-beige-three.vercel.app/" },
-      { label: "GitHub", url: "https://github.com/hmoreirar/job-tracker" },
-    ],
-    screenshot: "/projects/job-tracker.jpg",
-  },
-  {
-    title: "Calendario App",
-    description:
-      "Calendario con eventos recurrentes (RRULE), recordatorios y autenticación con Row Level Security.",
-    tech: ["React", "FullCalendar", "Supabase", "RRULE"],
-    links: [
-      { label: "GitHub", url: "https://github.com/hmoreirar/calendario-app" },
-    ],
-    icon: "calendar",
-  },
-  {
-    title: "Climate Monitor (Firmware)",
-    description:
-      "Firmware para ESP32 y ESP8266 con sensores SHT3X y BME280. Envío de datos a Supabase vía HTTP.",
-    tech: ["C++", "PlatformIO", "ESP32", "ESP8266", "HTTP"],
-    links: [
-      { label: "GitHub", url: "https://github.com/hmoreirar/climate-monitor-system" },
-    ],
-    icon: "chip",
-  },
-  {
-    title: "Astroblog",
-    description:
-      "Fanzine digital estático con estética dark y tipografía monospace. Deployado en GitHub Pages.",
-    tech: ["Astro", "TypeScript", "Markdown", "GitHub Pages"],
-    links: [
-      { label: "Demo", url: "https://hmoreirar.github.io/astroblog" },
-      { label: "GitHub", url: "https://github.com/hmoreirar/astroblog" },
-    ],
-    screenshot: "/projects/astroblog.jpg",
-  },
-  {
-    title: "Taller Piduco",
-    description:
-      "Portfolio para taller de carpintería artesanal con galería de imágenes, servicios y storytelling visual.",
-    tech: ["React", "Vite", "CSS"],
-    links: [
-      { label: "GitHub", url: "https://github.com/hmoreirar/camilo-madeira" },
-    ],
-    icon: "tool",
-  },
-  {
-    title: "Climapp",
-    description:
-      "App del clima con datos en tiempo real, pronóstico de 5 días, geolocalización y modo oscuro.",
-    tech: ["React", "TypeScript", "OpenWeatherMap API"],
-    links: [
-      { label: "GitHub", url: "https://github.com/hmoreirar/weather-app" },
-    ],
-    icon: "sun",
-  },
-];
+function altFor(p: Project) {
+  return lang === "es"
+    ? `Captura de pantalla de ${p.title}`
+    : `Screenshot of ${p.title}`;
+}
+
+const icons: Record<string, string> = {
+  cart: "M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2M20 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2",
+  calendar: "M3 4h18v18H3zM3 10h18M16 2v4M8 2v4",
+  chip: "M4 4h16v16H4zM9 9h6v6H9zM9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3",
+  chart: "M3 3v18h18M7 15v3M12 9v9M17 5v13",
+  sparkles: "M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9zM19 15l.9 2.1 2.1.9-2.1.9L19 21l-.9-2.1-2.1-.9 2.1-.9z",
+  sun: "M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1",
+  gauge: "M12 21a9 9 0 1 1 9-9M12 12l4-4",
+};
 ---
 
 <section class="section" id="projects">
   <div class="container">
-    <h2 class="section-title">Proyectos destacados</h2>
-    <div class="projects-grid">
-      {projects.map((p) => (
-        <article class="project-card">
-          <div class="project-card__image">
-            {p.screenshot ? (
-              <img src={p.screenshot} alt={p.title} class="project-card__screenshot" />
-            ) : (
-              <div class="project-card__icon">
-                {
-                  p.icon === "cart" ? (
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                    </svg>
-                  ) : p.icon === "calendar" ? (
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                      <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-                      <line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                  ) : p.icon === "chip" ? (
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="4" y="4" width="16" height="16" rx="2"/>
-                      <rect x="9" y="9" width="6" height="6"/>
-                      <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
-                      <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
-                      <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/>
-                      <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/>
-                    </svg>
-                  ) : p.icon === "tool" ? (
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                    </svg>
-                  ) : p.icon === "sun" ? (
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="5"/>
-                      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                    </svg>
-                  ) : null
-                }
+    <h2 class="section-title">{t("projects.title")}</h2>
+    <p class="section-lead">{t("projects.lead")}</p>
+
+    <div class="features">
+      {
+        featuredProjects.map((p) => (
+          <article class="feature">
+            <div class="feature__media">
+              {p.image ? (
+                <Image
+                  src={p.image}
+                  alt={altFor(p)}
+                  widths={[420, 720]}
+                  sizes="(max-width: 760px) 100vw, 420px"
+                  class="feature__shot"
+                  format="webp"
+                  quality={78}
+                />
+              ) : (
+                <div class="feature__placeholder" aria-hidden="true">
+                  <svg
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d={icons[p.icon]} />
+                  </svg>
+                </div>
+              )}
+            </div>
+
+            <div class="feature__body">
+              <div class="feature__head">
+                <h3 class="feature__title">{p.title}</h3>
+                {p.inProgress && (
+                  <span class="badge badge--wip">{t("projects.inProgress")}</span>
+                )}
               </div>
-            )}
-          </div>
-          <div class="project-card__body">
-            <h3 class="project-card__title">{p.title}</h3>
-            <p class="project-card__desc">{p.description}</p>
-            <div class="project-card__tech">
-              {p.tech.map((t) => <span>{t}</span>)}
-            </div>
-            <div class="project-card__links">
-              {p.links.map((l) => (
+
+              <p class="feature__desc">{p.description[lang]}</p>
+
+              <ul class="feature__points">
+                {p.highlights.map((h) => (
+                  <li>
+                    {parts(h[lang]).map((part) =>
+                      part.isCode ? <code>{part.code}</code> : part.code
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              <div class="tech">
+                {p.tech.map((item) => (
+                  <span>{item}</span>
+                ))}
+              </div>
+
+              <div class="links">
+                {p.demo && (
+                  <a
+                    href={p.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link link--demo"
+                  >
+                    {t("projects.demo")} ↗
+                  </a>
+                )}
                 <a
-                  href={l.url}
+                  href={p.repo}
                   target="_blank"
-                  class:list={[
-                    "project-card__link",
-                    l.label === "Demo" && "project-card__link--demo",
-                  ]}
+                  rel="noopener noreferrer"
+                  class="link"
                 >
-                  {l.label} ↗
+                  {t("projects.code")} ↗
                 </a>
-              ))}
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        ))
+      }
+    </div>
+
+    <h3 class="more-title">{t("projects.more")}</h3>
+
+    <div class="grid">
+      {
+        otherProjects.map((p) => (
+          <article class="card">
+            <div class="card__media">
+              {p.image ? (
+                <Image
+                  src={p.image}
+                  alt={altFor(p)}
+                  widths={[320, 640]}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 320px"
+                  class="card__shot"
+                  format="webp"
+                  quality={75}
+                />
+              ) : (
+                <div class="card__placeholder" aria-hidden="true">
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d={icons[p.icon]} />
+                  </svg>
+                </div>
+              )}
+            </div>
+
+            <div class="card__body">
+              <h4 class="card__title">{p.title}</h4>
+              <p class="card__desc">{p.description[lang]}</p>
+              <div class="tech">
+                {p.tech.map((item) => (
+                  <span>{item}</span>
+                ))}
+              </div>
+              <div class="links">
+                {p.demo && (
+                  <a
+                    href={p.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link link--demo"
+                  >
+                    {t("projects.demo")} ↗
+                  </a>
+                )}
+                <a
+                  href={p.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link"
+                >
+                  {t("projects.code")} ↗
+                </a>
+              </div>
+            </div>
+          </article>
+        ))
+      }
     </div>
   </div>
 </section>
 
 <style>
-  .projects-grid {
+  .features {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
   }
 
-  .project-card {
+  .feature {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 420px 1fr;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -223,103 +213,251 @@ const projects: Project[] = [
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
-  .project-card:hover {
+  .feature:hover {
     border-color: var(--accent);
     box-shadow: var(--shadow);
   }
 
-  .project-card__image {
+  .feature__media {
+    background: var(--bg-secondary);
+    min-height: 300px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     overflow: hidden;
-    background: var(--bg-secondary);
-    min-height: 200px;
   }
 
-  .project-card__screenshot {
+  .feature__shot {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: top center;
     display: block;
   }
 
-  .project-card__icon {
+  .feature__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     color: var(--text-muted);
-    opacity: 0.5;
+    opacity: 0.6;
   }
 
-  .project-card__body {
-    padding: 28px;
+  .feature__body {
+    padding: 30px;
     display: flex;
     flex-direction: column;
   }
 
-  .project-card__title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin-bottom: 8px;
+  .feature__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
   }
 
-  .project-card__desc {
+  .feature__title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .badge--wip {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .feature__desc {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 18px;
+  }
+
+  .feature__points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .feature__points li {
+    position: relative;
+    padding-left: 18px;
     font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .feature__points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  :global(code) {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas,
+      monospace;
+    font-size: 0.86em;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .tech span {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+  }
+
+  .links {
+    display: flex;
+    gap: 18px;
+    margin-top: auto;
+  }
+
+  .link {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .link:hover {
+    color: var(--text);
+  }
+
+  .link--demo {
+    color: var(--accent);
+  }
+
+  .link--demo:hover {
+    color: var(--accent-hover);
+  }
+
+  .more-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 64px 0 24px;
+    letter-spacing: -0.01em;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  .card__media {
+    background: var(--bg-secondary);
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .card__shot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  .card__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .card__body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card__title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .card__desc {
+    font-size: 0.85rem;
     color: var(--text-secondary);
     line-height: 1.7;
     margin-bottom: 16px;
     flex: 1;
   }
 
-  .project-card__tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 16px;
-  }
-
-  .project-card__tech span {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    padding: 4px 10px;
-    border-radius: 4px;
-    background: var(--bg-secondary);
-  }
-
-  .project-card__links {
-    display: flex;
-    gap: 16px;
-  }
-
-  .project-card__link {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .project-card__link:hover {
-    color: var(--text);
-  }
-
-  .project-card__link--demo {
-    color: var(--accent);
-  }
-
-  .project-card__link--demo:hover {
-    color: var(--accent-hover);
-  }
-
-  @media (max-width: 740px) {
-    .project-card {
+  @media (max-width: 860px) {
+    .feature {
       grid-template-columns: 1fr;
     }
 
-    .project-card__image {
-      min-height: 160px;
+    .feature__media {
+      min-height: 200px;
+      aspect-ratio: 16 / 9;
     }
 
-    .project-card__body {
-      padding: 20px;
+    .feature__body {
+      padding: 22px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .more-title {
+      margin: 48px 0 20px;
     }
   }
 </style>
