@@ -2,6 +2,7 @@ import type { ImageMetadata } from "astro";
 import pizzeriaImg from "../assets/projects/pizzeria.jpg";
 import climateDashboardImg from "../assets/projects/climate-dashboard.png";
 import reservasImg from "../assets/projects/reservas-dashboard.png";
+import nicommerceImg from "../assets/projects/nicommerce.png";
 import solarSystemImg from "../assets/projects/learning-threejs.jpg";
 import astroblogImg from "../assets/projects/astroblog.png";
 
@@ -144,6 +145,7 @@ export const projects: Project[] = [
     ],
     repo: "https://github.com/hmoreirar/ecommerce-fullstack-react-node",
     demo: "https://ecommerce-fullstack-react-node.vercel.app",
+    image: nicommerceImg,
     icon: "cart",
   },
 

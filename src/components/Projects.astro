@@ -49,8 +49,8 @@ const icons: Record<string, string> = {
                 <Image
                   src={p.image}
                   alt={altFor(p)}
-                  widths={[420, 720]}
-                  sizes="(max-width: 760px) 100vw, 420px"
+                  widths={[640, 960, 1280]}
+                  sizes="(max-width: 1048px) 100vw, 952px"
                   class="feature__shot"
                   format="webp"
                   quality={78}
@@ -204,8 +204,8 @@ const icons: Record<string, string> = {
   }
 
   .feature {
-    display: grid;
-    grid-template-columns: 420px 1fr;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -220,11 +220,12 @@ const icons: Record<string, string> = {
 
   .feature__media {
     background: var(--bg-secondary);
-    min-height: 300px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: stretch;
     justify-content: center;
-    overflow: hidden;
   }
 
   .feature__shot {
@@ -289,9 +290,9 @@ const icons: Record<string, string> = {
 
   .feature__points {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px 28px;
     margin-bottom: 22px;
   }
 
@@ -441,17 +442,12 @@ const icons: Record<string, string> = {
   }
 
   @media (max-width: 860px) {
-    .feature {
-      grid-template-columns: 1fr;
-    }
-
-    .feature__media {
-      min-height: 200px;
-      aspect-ratio: 16 / 9;
-    }
-
     .feature__body {
       padding: 22px;
+    }
+
+    .feature__points {
+      grid-template-columns: 1fr;
     }
   }
 
