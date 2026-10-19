@@ -35,7 +35,8 @@ jobs:
             --timeout 90
             --max-retries 3
             --retry-wait-time 10
-            --exclude-mail
+            --base-url 'https://www.hmoreira.dev'
+            --exclude 'https?://(www\.)?hmoreira\.dev'
             --exclude 'localhost'
             --exclude '127.0.0.1'
             'dist/**/*.html'
