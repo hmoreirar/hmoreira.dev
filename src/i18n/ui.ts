@@ -67,6 +67,7 @@ export const ui = {
     "projects.code": "Código",
     "projects.more": "Otros proyectos",
     "projects.decisions": "Decisiones técnicas",
+    "projects.demoAccess": "Acceso demo",
 
     "about.title": "Sobre mí",
     "about.p1":
@@ -153,6 +154,7 @@ export const ui = {
     "projects.code": "Code",
     "projects.more": "More projects",
     "projects.decisions": "Technical decisions",
+    "projects.demoAccess": "Demo access",
 
     "about.title": "About",
     "about.p1":

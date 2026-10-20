@@ -32,6 +32,8 @@ export interface Project {
   tech: string[];
   repo: string;
   demo?: string;
+  demoNote?: Localized;
+  demoLogin?: { email: string; password: string };
   image?: ImageMetadata;
   icon: IconName;
 }
@@ -71,6 +73,10 @@ export const projects: Project[] = [
     ],
     repo: "https://github.com/hmoreirar/pizzeria",
     demo: "https://pizzeria-zn6y.onrender.com/",
+    demoNote: {
+      es: "Tras inactividad, la primera carga puede tardar ~20–30 s (Render Free).",
+      en: "After inactivity, the first load may take ~20–30s (Render Free).",
+    },
     image: pizzeriaImg,
     icon: "cart",
   },
@@ -145,6 +151,14 @@ export const projects: Project[] = [
     ],
     repo: "https://github.com/hmoreirar/ecommerce-fullstack-react-node",
     demo: "https://ecommerce-fullstack-react-node.vercel.app",
+    demoNote: {
+      es: "La página abre rápido; el catálogo puede tardar ~20–30 s si la API estuvo inactiva (Render Free).",
+      en: "The page opens quickly; the catalog may take ~20–30s if the API was idle (Render Free).",
+    },
+    demoLogin: {
+      email: "demo@nicommerce.dev",
+      password: "demo1234",
+    },
     image: nicommerceImg,
     icon: "cart",
   },
@@ -199,6 +213,15 @@ export const projects: Project[] = [
       "Tailwind CSS",
     ],
     repo: "https://github.com/hmoreirar/reservas-saas",
+    demo: "https://reservas-saas-bwa7.onrender.com/",
+    demoNote: {
+      es: "Tras inactividad, la primera carga puede tardar ~20–30 s (Render Free).",
+      en: "After inactivity, the first load may take ~20–30s (Render Free).",
+    },
+    demoLogin: {
+      email: "demo@reservas-saas.dev",
+      password: "demo1234",
+    },
     image: reservasImg,
     icon: "calendar",
   },
