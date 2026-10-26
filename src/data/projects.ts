@@ -3,6 +3,7 @@ import pizzeriaImg from "../assets/projects/pizzeria.jpg";
 import climateDashboardImg from "../assets/projects/climate-dashboard.png";
 import reservasImg from "../assets/projects/reservas-dashboard.png";
 import nicommerceImg from "../assets/projects/nicommerce.png";
+import jobPulseImg from "../assets/projects/job-pulse.png";
 import solarSystemImg from "../assets/projects/learning-threejs.jpg";
 import astroblogImg from "../assets/projects/astroblog.png";
 
@@ -85,10 +86,9 @@ export const projects: Project[] = [
     slug: "job-pulse",
     title: "Job Pulse",
     featured: true,
-    inProgress: true,
     description: {
-      es: "Inteligencia de mercado laboral: recolectar, analizar y visualizar ofertas de empleo en tecnología para detectar tendencias de salario, skills demandadas y cambios del mercado.",
-      en: "Job market intelligence: collect, analyze and visualize IT job listings to spot salary trends, in-demand skills and market shifts.",
+      es: "Inteligencia de mercado laboral desplegada: recolecta ofertas técnicas con Playwright, las normaliza en PostgreSQL y las expone en un dashboard con estadísticas por fuente, experiencia, tipo de contrato y salario.",
+      en: "Deployed job-market intelligence: collects technical listings with Playwright, normalizes them in PostgreSQL and surfaces them in a dashboard with stats by source, seniority, contract type and salary.",
     },
     highlights: [
       {
@@ -96,12 +96,12 @@ export const projects: Project[] = [
         en: "FastAPI with a repository pattern: SQL is encapsulated outside the routes, so the API can be tested end to end without touching the real database.",
       },
       {
-        es: "Migraciones con Alembic, Docker Compose para levantar todo el entorno, y CI con GitHub Actions con un workflow independiente para backend, frontend y scraper.",
-        en: "Alembic migrations, Docker Compose to spin up the whole environment, and CI with GitHub Actions running a separate workflow for backend, frontend and scraper.",
+        es: "Backend con 6 archivos de test y frontend con 10 suites sobre stats, filtros, detalle y paginación. El scraper corre en modo loop y filtra por país; la SPA la sirve el propio FastAPI.",
+        en: "Backend covered by 6 test files and frontend by 10 suites over stats, filters, detail and pagination. The scraper runs in loop mode and filters by country; FastAPI serves the SPA itself.",
       },
       {
-        es: "Backend cubierto por 6 archivos de test (`test_api`, `test_database`, `test_jobs`, `test_repositories`, `test_health`, `test_scrapers`). El scraper con Playwright sigue en desarrollo.",
-        en: "Backend covered by 6 test files (`test_api`, `test_database`, `test_jobs`, `test_repositories`, `test_health`, `test_scrapers`). The Playwright scraper is still under development.",
+        es: "Migraciones con Alembic y CI en GitHub Actions con workflows separados para backend, frontend, scraper, scrape programado, backup y health check.",
+        en: "Alembic migrations and GitHub Actions CI with separate workflows for backend, frontend, scraper, scheduled scrape, backup and health check.",
       },
     ],
     tech: [
@@ -115,6 +115,12 @@ export const projects: Project[] = [
       "GitHub Actions",
     ],
     repo: "https://github.com/hmoreirar/job-pulse",
+    demo: "https://job-pulse-1dn9.onrender.com",
+    demoNote: {
+      es: "Tras inactividad, la primera carga puede tardar ~40 s (Render Free).",
+      en: "After inactivity, the first load may take ~40s (Render Free).",
+    },
+    image: jobPulseImg,
     icon: "chart",
   },
 
@@ -173,12 +179,16 @@ export const projects: Project[] = [
     },
     highlights: [
       {
-        es: "El dato viaja completo: ESP32 + sensor SHT3X hace `POST /api/ingest` con API key hacia Neon (Postgres), y Next.js lo lee para pintar el dashboard. Firmware aparte, en el repo `climate-monitor-system`.",
-        en: "The full data path: ESP32 + SHT3X sensor does `POST /api/ingest` with an API key into Neon (Postgres), and Next.js reads it to render the dashboard. Firmware lives separately in the `climate-monitor-system` repo.",
+        es: "El dato viaja completo: el firmware ESP32 + SHT3X hace `POST /api/ingest` con API key hacia Neon, y Next.js lo lee para pintar el dashboard. El firmware vive en `firmware/esp32-sht3x`, dentro del mismo repo.",
+        en: "The full data path: the ESP32 + SHT3X firmware does `POST /api/ingest` with an API key into Neon, and Next.js reads it to render the dashboard. Firmware lives in `firmware/esp32-sht3x`, inside the same repo.",
       },
       {
-        es: "Gráficos con líneas de umbral y comparación entre hoy y ayer, más widgets de clima exterior y calidad del aire vía Open-Meteo con selector de ubicación.",
-        en: "Charts with threshold lines and today-vs-yesterday comparison, plus outdoor weather and air quality widgets via Open-Meteo with a location picker.",
+        es: "El dispositivo mide cada 5 min pero sube en lotes cada 30: Neon suspende el compute a los ~5 min de inactividad, así que escribir cada 5 min quemaba la cuota gratuita de 100 CU-horas en ~16 días. Con lotes baja a ~33 CU-h/mes.",
+        en: "The device samples every 5 min but uploads in batches every 30: Neon suspends compute after ~5 min idle, so writing every 5 min burned the 100 free CU-hours in ~16 days. Batching brings it down to ~33 CU-h/month.",
+      },
+      {
+        es: "Datos crudos retenidos 30 días y consultas históricas por agregados horarios. Gráficos con líneas de umbral, comparación hoy vs ayer y widgets de clima y calidad del aire vía Open-Meteo.",
+        en: "Raw data kept for 30 days with older history served from hourly aggregates. Charts with threshold lines, today-vs-yesterday comparison and weather / air-quality widgets via Open-Meteo.",
       },
     ],
     tech: [
@@ -278,12 +288,12 @@ export const projects: Project[] = [
     title: "Climate Monitor (Firmware)",
     featured: false,
     description: {
-      es: "Firmware en C++ para ESP32 y ESP8266 con sensores SHT3X y BME280. Lectura ambiental, conectividad WiFi y envío de datos por HTTP.",
-      en: "C++ firmware for ESP32 and ESP8266 with SHT3X and BME280 sensors. Environmental readings, WiFi connectivity and HTTP data submission.",
+      es: "Firmware en C++ para ESP32 con sensor SHT3X. Muestrea cada 5 minutos, sincroniza por NTP y sube lecturas en lote cada 30 minutos para no mantener despierta la base. OTA deshabilitado: la API key va compilada en el binario.",
+      en: "C++ firmware for ESP32 with an SHT3X sensor. Samples every 5 minutes, syncs over NTP and uploads readings in batches every 30 minutes so the database can idle. OTA is disabled because the ingest key is compiled into the binary.",
     },
     highlights: [],
-    tech: ["C++", "PlatformIO", "ESP32", "ESP8266", "HTTP"],
-    repo: "https://github.com/hmoreirar/climate-monitor-system",
+    tech: ["C++", "PlatformIO", "ESP32", "HTTP", "NTP"],
+    repo: "https://github.com/hmoreirar/climate-dashboard/tree/main/firmware/esp32-sht3x",
     icon: "chip",
   },
 ];
